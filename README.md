@@ -3,7 +3,7 @@
 #### A simple sample app that shows how to get HTTP error responses in AFNetworking 2.x
 ---
 
-(AFNetworking)[http://afnetworking.com] is one of the most popular 3rd party, open-source Cocoa frameworks that takes the pain out of complex many complex networking tasks iOS/OSX developers frequently encounter. Among other things, AFNetworking makes it easy to process data from RESTful APIs, giving you an id responseObject which you can serialize into Foundation NSArray, NSDictionary, NSString, and NSNumber data structures your model classes can use. However, not all API calls are successful (sometimes the server is down!) so we need to properly handle errors should they occur.
+[AFNetworking](http://afnetworking.com) is one of the most popular 3rd party, open-source Cocoa frameworks that takes the pain out of complex many complex networking tasks iOS/OSX developers frequently encounter. Among other things, AFNetworking makes it easy to process data from RESTful APIs, giving you an id responseObject which you can serialize into Foundation NSArray, NSDictionary, NSString, and NSNumber data structures your model classes can use. However, not all API calls are successful (sometimes the server is down!) so we need to properly handle errors should they occur.
 
 We've all tried inspecting and logging the NSErrror in the failure block of an AFHTTPSessionManager request to make heads or tails of why a particular request failed during development only to get this:
 ```
@@ -41,8 +41,9 @@ Searching the Internet has several solutions to this problem, including subclass
 
 These two blogposts go into good detail with how to solve this problem that way:
 
-* (Retrieving Response Body via AFNetworking with an HTTP Error Status Code)[http://blog.gregfiumara.com/archives/239]
-* (Accessing the response body in failure blocks with AFNetworking 2)[http://www.splinter.com.au/2014/09/10/afnetworking-error-bodies/]
+* [Retrieving Response Body via AFNetworking with an HTTP Error Status Code](http://blog.gregfiumara.com/archives/239]
+* [Accessing the response body in failure blocks with AFNetworking 2](http://www.splinter.com.au/2014/09/10/afnetworking-error-bodies/)
+
 
 However, there actually exists a much simpler solution that doesn't require subclassing! If you peek into the userInfo dictionary and look at the `AFNetworkingOperationFailingURLResponseDataErrorKey` key, you get the response you're looking for as an NSData object. You can then transform that data into an NSDictionary using the NSJSONSerialization class.
 
@@ -53,7 +54,7 @@ NSData *errorData = error.userInfo[AFNetworkingOperationFailingURLResponseDataEr
 NSDictionary *serializedData = [NSJSONSerialization JSONObjectWithData: errorData options:kNilOptions error:nil];
 ```
 
-Within this simple sample app, I send a GET request to Twitter from their developer documentation that fails due to a lack of authentication. I subclass `AFHTTPSessionManager` as `ErrorSessionManager` and set the base URL to: "https://api.twitter.com/" so all requests have that base URL. I then make the request, which I expect to fail, print out the NSError object, then the failure response body, and finally access the dictionary to get a clear message that is presentable to a user.
+Within this simple sample app, I send a GET request to Twitter from their developer documentation that fails due to a lack of authentication. I subclass `AFHTTPSessionManager` as `ErrorSessionManager` and set the base URL to: `https://api.twitter.com/` so all requests have that base URL. I then make the request, which I expect to fail, print out the NSError object, then the failure response body, and finally access the dictionary to get a clear message that is presentable to a user.
 
 Here's the complete request:
 
