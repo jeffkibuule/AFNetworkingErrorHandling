@@ -8,7 +8,7 @@
 
 #import "ErrorSessionManager.h"
 
-static NSString * BASE_URL = @"http://www.twitter.com/";
+static NSString * BASE_URL = @"https://api.twitter.com/";
 
 @implementation ErrorSessionManager
 

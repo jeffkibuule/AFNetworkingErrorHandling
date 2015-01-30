@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "ErrorSessionManager.h"
 
 @interface ViewController ()
 
@@ -14,14 +15,43 @@
 
 @implementation ViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    [self getTwitterStatus];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)getTwitterStatus {
+    NSString *samplePath = @"1.1/statuses/mentions_timeline.json?count=2&since_id=14927799";
+    
+    // This call will fail without proper Twitter authenticaion
+    [[ErrorSessionManager sharedInstance] GET:samplePath parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        // Log success response
+        NSLog(@"AFNetworking success response body: %@", responseObject);
+        
+        // Process response data here
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        // Log error object
+        NSLog(@"AFNetworking error response: %@\n\n\n", error);
+        
+        // Use the appropriate key to get the error data
+        NSData *errorData = error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey];
+        
+        // Serialize the data into JSON
+        NSDictionary *serializedData = [NSJSONSerialization JSONObjectWithData: errorData options:kNilOptions error:nil];
+        
+        // Print out the error JSON body
+        NSLog(@"AFNetworking error response body: %@", serializedData);
+        
+        // Get the specific error cause and present a UIAlert
+        NSLog(@"Error reason: %@", [serializedData valueForKeyPath:@"errors.message"][0]);
+        
+        NSString *message = [NSString stringWithFormat:@"Failed to GET Twitter data with reason: %@", [serializedData valueForKeyPath:@"errors.message"][0]];
+        UIAlertController *errorController = [UIAlertController alertControllerWithTitle:@"Error" message:message preferredStyle:UIAlertControllerStyleAlert];
+        [errorController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:nil]];
+        
+        [self presentViewController:errorController animated:YES completion:nil];
+    }];
 }
 
 @end
