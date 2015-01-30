@@ -43,9 +43,10 @@
         // Print out the error JSON body
         NSLog(@"AFNetworking error response body: %@", serializedData);
         
-        // Get the specific error cause and present a UIAlert
+        // Get the specific error cause and log it
         NSLog(@"Error reason: %@", [serializedData valueForKeyPath:@"errors.message"][0]);
         
+        // Present that same error cause to the user
         NSString *message = [NSString stringWithFormat:@"Failed to GET Twitter data with reason: %@", [serializedData valueForKeyPath:@"errors.message"][0]];
         UIAlertController *errorController = [UIAlertController alertControllerWithTitle:@"Error" message:message preferredStyle:UIAlertControllerStyleAlert];
         [errorController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:nil]];
