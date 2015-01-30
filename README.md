@@ -1,13 +1,13 @@
 ## AFNetworkingErrorHandling
 
 #### A simple sample app that shows how to get HTTP error responses in AFNetworking 2.x
----
+
 
 [AFNetworking](http://afnetworking.com) is one of the most popular 3rd party, open-source Cocoa frameworks that takes the pain out of complex many complex networking tasks iOS/OSX developers frequently encounter. Among other things, AFNetworking makes it easy to process data from RESTful APIs, giving you an id responseObject which you can serialize into Foundation `NSArray`, `NSDictionary`, `NSString`, and `NSNumber` data structures your model classes can use. However, not all API calls are successful (sometimes the server is down!) so we need to properly handle errors should they occur.
 
 For example, when making a request to the Twitter API without any authentication, we get a JSON reponse that looks like this:
 
-```
+```json
 {
     "errors": [
         {
