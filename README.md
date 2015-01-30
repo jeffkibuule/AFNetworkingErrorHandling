@@ -41,7 +41,7 @@ Searching the Internet has several solutions to this problem, including subclass
 
 These two blogposts go into good detail with how to solve this problem that way:
 
-* [Retrieving Response Body via AFNetworking with an HTTP Error Status Code](http://blog.gregfiumara.com/archives/239]
+* [Retrieving Response Body via AFNetworking with an HTTP Error Status Code](http://blog.gregfiumara.com/archives/239)
 * [Accessing the response body in failure blocks with AFNetworking 2](http://www.splinter.com.au/2014/09/10/afnetworking-error-bodies/)
 
 
