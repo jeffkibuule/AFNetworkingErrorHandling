@@ -5,7 +5,20 @@
 
 [AFNetworking](http://afnetworking.com) is one of the most popular 3rd party, open-source Cocoa frameworks that takes the pain out of complex many complex networking tasks iOS/OSX developers frequently encounter. Among other things, AFNetworking makes it easy to process data from RESTful APIs, giving you an id responseObject which you can serialize into Foundation `NSArray`, `NSDictionary`, `NSString`, and `NSNumber` data structures your model classes can use. However, not all API calls are successful (sometimes the server is down!) so we need to properly handle errors should they occur.
 
-We've all tried inspecting and logging the `NSError` in the failure block of an AFHTTPSessionManager request to make heads or tails of why a particular request failed during development only to get this:
+For example, when making a request to the Twitter API without any authentication, we get a JSON reponse that looks like this:
+
+```
+{
+    "errors": [
+        {
+            "message": "Bad Authentication data",
+            "code": 215
+        }
+    ]
+}
+```
+
+In our simple sample app, we want to extract the message key to present to the user for why the GET request failed, however in AFNetworking, the response object is not passed as a parameter in the failure block like it is in the success block. We've all tried logging and inspecting the `NSError` we do have access to only to get this not so useful block of text:
 ```
 2015-01-30 00:09:22.913 AFNetworkingErrorHandling[12816:637494] AFNetworking error response: Error Domain=com.alamofire.error.serialization.response Code=-1011 "Request failed: bad request (400)" UserInfo=0x7fdc4c3627f0 {com.alamofire.serialization.response.error.response=<NSHTTPURLResponse: 0x7fdc4a71ba10> { URL: https://api.twitter.com/1.1/statuses/mentions_timeline.json?count=2&since_id=14927799 } { status code: 400, headers {
 "Content-Encoding" = deflate;
@@ -20,7 +33,7 @@ Server = "tsa_a";
 } }, NSErrorFailingURLKey=https://api.twitter.com/1.1/statuses/mentions_timeline.json?count=2&since_id=14927799, com.alamofire.serialization.response.error.data=<7b226572 726f7273 223a5b7b 226d6573 73616765 223a2242 61642041 75746865 6e746963 6174696f 6e206461 7461222c 22636f64 65223a32 31357d5d 7d>, NSLocalizedDescription=Request failed: bad request (400)}
 ```
 
-When instead what you as a developer would really like to see is an `NSDictionary` like this:
+When instead, what you as a developer would really like to see is an `NSDictionary` like this which matches the JSON response body from above:
 
 ```
 2015-01-30 00:09:22.913 AFNetworkingErrorHandling[12816:637494] 
@@ -54,7 +67,7 @@ NSData *errorData = error.userInfo[AFNetworkingOperationFailingURLResponseDataEr
 NSDictionary *serializedData = [NSJSONSerialization JSONObjectWithData: errorData options:kNilOptions error:nil];
 ```
 
-Within this simple sample app, I send a GET request to Twitter from their developer documentation that fails due to a lack of authentication. I subclass `AFHTTPSessionManager` as custom `ErrorSessionManager` and set the base URL to: `https://api.twitter.com/` so all requests have that base URL. I then make the request, which I expect to fail, print out the NSError object, then the failure response body, and finally access the dictionary to get a clear message that is presentable to a user.
+To recap, within this simple sample app, I send a GET request to Twitter from their developer documentation that fails due to a lack of authentication. I subclass `AFHTTPSessionManager` as my custom `ErrorSessionManager` and set the base URL to: `https://api.twitter.com/` so all requests have that base URL. I then make the request, which I expect to fail, print out the NSError object, then the failure response body, and finally access the dictionary to get a clear message that is presentable to a user.
 
 Here's the complete request:
 
@@ -90,4 +103,4 @@ NSString *samplePath = @"1.1/statuses/mentions_timeline.json?count=2&since_id=14
     }];
 ```
 
-That's it! Hopefully this simplifies your error handling code when using AFNetworking 2.x in your applications.
+That's it! Hopefully this simplifies your error handling code when using AFNetworking 2.x in your iOS and OS X apps.
